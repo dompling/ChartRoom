@@ -1,0 +1,795 @@
+*,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+.noMore {
+  text-align: center;
+  color: #6f6f6f;
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+.clearfix::before,
+.clearfix::after {
+  content: '.';
+  display: block;
+  height: 0;
+  visibility: hidden;
+}
+
+.clearfix::after {
+  clear: both;
+}
+
+.clearfix {
+  zoom: 1;
+}
+
+body {
+  background: #f5f5f7;
+  overflow-y: hidden;
+  position: relative;
+}
+
+.aotuheight {
+  background: #f5f5f7;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+}
+
+.msgcontent {
+  width: 100%;
+  overflow-x: hidden;
+  overflow-y: scroll;
+  z-index: 4;
+  height: 100vh;
+  box-sizing: border-box;
+}
+
+.msgcontent.hide div {
+  opacity: 0;
+}
+
+.msgcontent.hide .msgload {
+  visibility: visible !important;
+  opacity: 100 !important;
+}
+
+.msgcontent .msgload {
+  visibility: hidden;
+  display: inline-block;
+  position: fixed !important;
+  top: 10px;
+  left: 50%;
+  margin-left: -8px !important;
+  z-index: 5;
+}
+
+.msgcontent #debugout {
+  display: none;
+  position: fixed !important;
+  top: 30px;
+  left: 0;
+  text-align: center;
+  z-index: 5;
+}
+
+.divBottom {
+  background: #f5f5f7;
+  width: 100%;
+  z-index: 5;
+  border-top: 1px solid #dadadc;
+  border-bottom: 1px solid #dadadc;
+  -webkit-overflow-scrolling: touch;
+  position: fixed;
+  bottom: env(safe-area-inset-bottom);
+}
+
+.divBottom_top {
+  position: relative;
+}
+
+.divBottom .btndown {
+  display: inline-block;
+  position: absolute;
+  height: 24px;
+  line-height: 24px;
+  right: 6px;
+  border: 1px solid #e7e7e7;
+  background: #fff;
+  cursor: pointer;
+  border-radius: 13px;
+  z-index: 5;
+  bottom: 60px;
+}
+
+.divBottom.msgdown .btndown {
+  top: -30px;
+}
+
+.divBottom.msgup .btndown {
+  bottom: -30px;
+}
+
+.divBottom .btndown::before {
+  position: absolute;
+  content: '';
+  display: block;
+  width: 0;
+  height: 0;
+  border-width: 7px;
+  border-style: solid;
+  border-color: #09bb07 transparent transparent;
+  left: 6px;
+  top: 9px;
+}
+
+.divBottom .btndown b {
+  line-height: 24px;
+  color: #09bb07;
+  margin: 3px 8px 3px 24px;
+}
+
+.divBottom #txtMsg {
+  margin: 10px;
+  background: #fcfcfc;
+  border: 1px solid #dcdcde;
+  border-radius: 8px;
+  resize: none;
+  overflow: hidden;
+  line-height: 18px;
+  font-size: 16px;
+  padding: 5px 8px;
+  outline: none;
+  display: block;
+}
+
+.divBottom .inpvkb {
+  position: relative;
+  height: 160px;
+  background: #d0d3dc;
+  display: none;
+}
+
+.divBottom .inpvkb ul {
+  padding-top: 5px;
+  width: 96%;
+  height: 30px;
+  margin: 0 auto;
+
+  /* 系统默认菜单被禁用 */
+
+  /* webkit浏览器 */
+  user-select: auto;
+}
+
+.divBottom .inpvkb ul li {
+  cursor: pointer;
+  width: 12%;
+  height: 30px;
+  line-height: 30px;
+  font-size: 18px;
+  font-weight: bold;
+  margin-left: 1%;
+  margin-right: 1%;
+  float: left;
+  background: #fdffff;
+  color: #000;
+  text-align: center;
+  border-radius: 20%;
+
+  /* 系统默认菜单被禁用 */
+
+  /* webkit浏览器 */
+  user-select: auto;
+}
+
+.divBottom .inpvkb ul li.w2 {
+  width: 16%;
+  margin-left: 2%;
+  margin-right: 2%;
+}
+
+.divBottom .inpvkb ul li.del {
+  color: red !important;
+}
+
+.divBottom .inpvkb ul li.nline {
+  color: #7f8085 !important;
+  background: orange !important;
+}
+
+.divBottom .inpvkb ul li:hover,
+.divBottom .inpvkb .bspace:hover::after {
+  background: darkorange !important;
+}
+
+.divBottom.selekb .inpvkb {
+  display: block !important;
+}
+
+.divBottom .inpvkb .bspace {
+  position: relative;
+}
+
+.divBottom .inpvkb .bspace::before {
+  content: '';
+  position: absolute;
+  width: 80%;
+  height: 10px;
+  left: 10%;
+  bottom: 5px;
+  border-radius: 2px;
+  background: #7f8085;
+}
+
+.divBottom .inpvkb .bspace::after {
+  content: '';
+  position: absolute;
+  width: 70%;
+  height: 10px;
+  left: 15%;
+  bottom: 8px;
+  border-radius: 2px;
+  background: #fff;
+}
+
+.divBottom .vkb {
+  cursor: pointer;
+  display: block;
+  margin: 0;
+  border: 1px solid #a7a7a9;
+  box-sizing: border-box;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  font-weight: bold;
+  color: #7f8085;
+}
+
+.divBottom.selekb .vkb {
+  border: 1px solid darkorange !important;
+}
+
+.divBottom.selekb .vkb::before,
+.divBottom.selekb .vkb li,
+.divBottom.selekb .vkb li::before {
+  background: chocolate !important;
+}
+
+.divBottom .vkb ul {
+  margin-top: 6px;
+  margin-left: 3px;
+  width: 22px;
+  height: 10px;
+}
+
+.divBottom .vkb ul li {
+  position: relative;
+  width: 4px;
+  height: 4px;
+  background: #7f8085;
+  margin-right: 1px;
+  float: left;
+  border-radius: 2px;
+}
+
+.divBottom .vkb ul li::before {
+  position: absolute;
+  content: '';
+  width: 4px;
+  height: 4px;
+  background: #7f8085;
+  top: 5px;
+  float: left;
+  border-radius: 2px;
+}
+
+.divBottom .vkb ul::before,
+.divBottom .vkb ul::after {
+  content: '.';
+  display: block;
+  height: 0;
+  visibility: hidden;
+}
+
+.divBottom .vkb ul::after {
+  clear: both;
+}
+
+.divBottom .vkb::before {
+  content: '';
+  position: absolute;
+  width: 12px;
+  height: 3px;
+  left: 50%;
+  top: 75%;
+  margin-left: -6px;
+  margin-top: -1px;
+  border-radius: 2px;
+  background: #7f8085;
+}
+
+.divBottom .add {
+  cursor: pointer;
+  position: absolute;
+  right: 0;
+  bottom: 1px;
+  display: block;
+  vertical-align: bottom;
+  margin: 0;
+}
+
+.divBottom .add {
+  border: 1px solid #a7a7a9;
+  right: 10px;
+  box-sizing: border-box;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  font-weight: bold;
+  color: #7f8085;
+}
+
+.divBottom .add::before {
+  content: '';
+  position: absolute;
+  width: 16px;
+  height: 2px;
+  left: 50%;
+  top: 50%;
+  margin-left: -8px;
+  margin-top: -1px;
+  background: #7f8085;
+}
+
+.divBottom .add::after {
+  content: '';
+  position: absolute;
+  width: 2px;
+  height: 16px;
+  left: 50%;
+  top: 50%;
+  margin-left: -1px;
+  margin-top: -8px;
+  background: #7f8085;
+}
+
+.divBottom .send {
+  border: 1px solid #1f8b1b;
+  right: 3px;
+  width: 50px;
+  height: 26px;
+  border-radius: 3px;
+  text-align: center;
+  line-height: 26px;
+  font-weight: bold;
+  color: #fff;
+  background: #1aac19;
+}
+
+.send_actions {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+.divBottom #txtMsg {
+  flex: 1;
+}
+
+.msgcontent .msgtime b,
+.msgcontent .msgover b,
+.msglayer .uname,
+.msglayer *,
+.divBottom .add,
+.divBottom .send {
+  -webkit-touch-callout: none;
+
+  /* 系统默认菜单被禁用 */
+  user-select: none;
+
+  /* webkit浏览器 */
+}
+
+.msgcontent .msgtime,
+.msgcontent .msgover {
+  width: 100%;
+  text-align: center;
+  margin-top: 20px;
+}
+
+.msgcontent .msgtime b,
+.msgcontent .msgover b {
+  margin: 0 auto;
+  font-weight: normal;
+  background: #cecece;
+  color: #fff;
+  padding: 2px 5px;
+  border-radius: 4px;
+  font-size: 12px;
+  line-height: 12px;
+}
+
+.msglayer .uname.sys {
+  color: red !important;
+}
+
+.msglayer::before,
+.msglayer::after {
+  content: '.';
+  display: block;
+  height: 0;
+  visibility: hidden;
+}
+
+.msglayer::after {
+  clear: both;
+}
+
+.msglayer {
+  zoom: 1;
+  position: relative;
+}
+
+.msglayer .msgimg {
+  position: relative;
+  zoom: 1;
+  text-align: center;
+  display: block;
+  margin: 5px auto;
+}
+
+.msglayer .msgimg img {
+  display: inline-block;
+  max-width: 95%;
+  margin: 0 auto;
+}
+
+.msglayer.msgleft .headimg,
+.msglayer.msgright .headimg {
+  width: 46px;
+  height: 46px;
+  position: absolute;
+  top: -18px;
+  overflow: hidden;
+  border-radius: 4px;
+}
+
+.uname {
+  span {
+    margin: 0 5px;
+  }
+}
+
+.msgright .uname {
+  display: flex;
+  flex-direction: row-reverse;
+}
+
+.msglayer .headimg::before {
+  position: absolute;
+  display: block;
+  width: 46px;
+  height: 46px;
+  right: 0;
+  top: 0;
+  background: #f1f1f1 url('/Images/defaultheadimg.jpg') no-repeat;
+  background-size: contain;
+  content: '';
+  z-index: 1;
+}
+
+.msglayer.msgleft .headimg img,
+.msglayer.msgright .headimg img {
+  position: relative;
+  z-index: 2;
+  width: 46px;
+  height: 46px;
+  border-radius: 4px;
+}
+
+.msglayer.msgleft .uname,
+.msglayer.msgright .uname {
+  position: absolute;
+  top: -20px;
+  color: #6f6f6f;
+  font-weight: 100;
+  white-space: nowrap;
+}
+
+.msglayer .fpop.corr {
+  background: #eff0fe !important;
+}
+
+.msglayer .fpop.corr::after {
+  border-color: transparent #eff0fe transparent transparent !important;
+}
+
+.msglayer .fpop.corrgm {
+  background: red !important;
+  color: #fff;
+  border: 1px solid #000 !important;
+}
+
+.msglayer .fpop.corrgm::after {
+  border-color: transparent red transparent transparent !important;
+}
+
+.msglayer .fpop.corrgm::before {
+  border-color: transparent #000 transparent transparent !important;
+}
+
+.msglayer.qun .uname::before {
+  display: inline;
+  background: #f4a460;
+  color: #fff;
+  font-size: 8px;
+  line-height: 10px;
+  text-align: center;
+  padding: 0 1px;
+  margin-right: 2px;
+  border-radius: 2px;
+  content: '群主';
+}
+
+.msglayer.guan .uname::before {
+  display: inline;
+  background: #32cd32;
+  color: #fff;
+  font-size: 8px;
+  line-height: 10px;
+  text-align: center;
+  padding: 0 1px;
+  margin-right: 2px;
+  border-radius: 2px;
+  content: '管理员';
+}
+
+.msglayer.msgleft .fpop {
+  float: left;
+  display: inline-block;
+  max-width: 65%;
+  min-width: 30px;
+  min-height: 30px;
+  width: auto;
+  margin: 25px 0 0 68px;
+  padding: 0;
+  background: #fff;
+  border-radius: 7px;
+  position: relative;
+}
+
+.msglayer.msgleft .fpop::before,
+.msglayer.msgleft .fpop::after {
+  display: block;
+  content: '';
+  width: 0;
+  height: 0;
+  font-size: 0;
+  overflow: hidden;
+  position: absolute;
+}
+
+/*
+.msglayer.msgleft .fpop:before{
+border-width:8px;
+border-style:solid dashed dashed;
+border-color:transparent #d1d1d1 transparent transparent;
+left:-16px;
+top:7px;
+} */
+.msglayer.msgleft .fpop::after {
+  border-width: 10px;
+  border-style: solid dashed dashed;
+  border-color: transparent #fff transparent transparent;
+  left: -16px;
+  top: 5px;
+}
+
+.msglayer.msgleft .headimg {
+  left: -60px;
+}
+
+.msglayer.msgleft .uname {
+  left: -0;
+}
+
+.msglayer.msgright .fpop {
+  float: right;
+  display: inline-block;
+  max-width: 65%;
+  min-width: 30px;
+  min-height: 30px;
+  margin: 25px 68px 0 0;
+  padding: 0;
+  background: #a1e85a;
+  border-radius: 7px;
+  position: relative;
+  color: #253f0f;
+}
+
+.msglayer.msgright .fpop::before,
+.msglayer.msgright .fpop::after {
+  display: block;
+  content: '';
+  width: 0;
+  height: 0;
+  font-size: 0;
+  overflow: hidden;
+  position: absolute;
+}
+
+/*
+.msglayer.msgright .fpop:before{
+border-width:8px;
+border-style:solid dashed dashed;
+border-color:transparent transparent transparent #84b559;
+right:-16px;
+top:7px;
+}
+*/
+.msglayer.msgright .fpop::after {
+  border-width: 10px;
+  border-style: solid dashed dashed;
+  border-color: transparent transparent transparent #a1e85a;
+  right: -16px;
+  top: 5px;
+}
+
+.msglayer.msgright .headimg {
+  right: -60px;
+}
+
+.msglayer.msgright .uname {
+  right: -0;
+}
+
+.msglayer pre.msgpre {
+  position: relative;
+  zoom: 1;
+  margin: 6px;
+  font-size: 16px;
+  line-height: 18px;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+
+  /* 系统默认菜单被禁用 */
+
+  /* webkit浏览器 */
+  user-select: auto;
+}
+
+.font_big .msglayer pre.msgpre {
+  font-size: 24px !important;
+  line-height: 26px !important;
+}
+
+.font_medium .msglayer pre.msgpre {
+  font-size: 20px !important;
+  line-height: 22px !important;
+}
+
+.font_big .msgcontent .msgtime b,
+.font_big .msgcontent .msgover b {
+  font-size: 20px !important;
+  line-height: 22px !important;
+}
+
+.font_medium .msgcontent .msgtime b,
+.font_medium .msgcontent .msgover b {
+  font-size: 16px !important;
+  line-height: 18px !important;
+}
+
+.font_big .msglayer.msgleft .uname,
+.font_big .msglayer.msgright .uname {
+  font-size: 16px !important;
+  line-height: 18px !important;
+}
+
+.font_medium .msglayer.msgleft .uname,
+.font_medium .msglayer.msgright .uname {
+  font-size: 14px !important;
+  line-height: 16px !important;
+}
+
+.font_big .divBottom #txtMsg {
+  font-size: 20px !important;
+  line-height: 22px !important;
+}
+
+.font_medium .divBottom #txtMsg {
+  font-size: 18px !important;
+  line-height: 20px !important;
+}
+
+@keyframes throbber-loader {
+  0% {
+    background: #dde2e7;
+  }
+
+  10% {
+    background: #6b9dc8;
+  }
+
+  40% {
+    background: #dde2e7;
+  }
+}
+
+@keyframes throbber-loader {
+  0% {
+    background: #dde2e7;
+  }
+
+  10% {
+    background: #6b9dc8;
+  }
+
+  40% {
+    background: #dde2e7;
+  }
+}
+
+@keyframes throbber-loader {
+  0% {
+    background: #dde2e7;
+  }
+
+  10% {
+    background: #6b9dc8;
+  }
+
+  40% {
+    background: #dde2e7;
+  }
+}
+
+/* :not(:required) hides these rules from IE9 and below */
+.throbber-loader:not(:required) {
+  animation: throbber-loader 2000ms 300ms infinite ease-out;
+  background: #dde2e7;
+  display: inline-block;
+  position: relative;
+  text-indent: -9999px;
+  width: 8px;
+  height: 16px;
+  margin: 0 20px;
+}
+
+.throbber-loader:not(:required)::before,
+.throbber-loader:not(:required)::after {
+  background: #dde2e7;
+  content: '\x200B';
+  display: inline-block;
+  width: 8px;
+  height: 16px;
+  position: absolute;
+  top: 0;
+}
+
+.throbber-loader:not(:required)::before {
+  animation: throbber-loader 2000ms 150ms infinite ease-out;
+  left: -15px;
+}
+
+.throbber-loader:not(:required)::after {
+  animation: throbber-loader 2000ms 450ms infinite ease-out;
+  right: -15px;
+}
+
+.msglayer .msg-loader {
+  position: absolute;
+  top: 50%;
+  margin-top: -8px;
+  left: -50px;
+  display: inline-block;
+}
