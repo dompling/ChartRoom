@@ -24,12 +24,19 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
+        # 获取最近一次提交的消息
+      - name: Get last commit message
+        id: commit_message
+        run: |
+          COMMIT_MESSAGE=$(git log --format=%B -n 1 ${{ github.sha }})
+          echo "{name}={message}" >> $COMMIT_MESSAGE
+
       - name: Read version file
         id: read_version
         run: |
           version=$(cat .version)
           echo "Current version: $version"
-          echo "::set-output name=current_version::$version"
+          echo "name=current_version" >> $version
 
       - name: Bump version
         id: bump_version
@@ -40,7 +47,7 @@ jobs:
           new_version="${version_parts[0]}.${version_parts[1]}.${version_parts[2]}"
           echo "New version: $new_version"
           echo $new_version > .version
-          echo "::set-output name=new_version::$new_version"  
+          echo "{name}={new_version}" >> $new_version
 
       - name: Commit and push file
         env:
@@ -101,25 +108,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.TOKEN }}
         with:
+          body: ${{ steps.commit_message.outputs.message }}
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ./dist.zip
           asset_name: dist.zip
           asset_content_type: application/zip
-
-  create-changelog:
-    runs-on: ubuntu-latest
-    # 需要等build结束后才执行此处
-    needs: build-release
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 16.x
-
-      # 生成版本更新日志
-      - run: npx changelogithub
-        env:
-          GITHUB_TOKEN: ${{secrets.TOKEN}}
