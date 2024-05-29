@@ -54,7 +54,7 @@ jobs:
           git config --global user.name "${{ secrets.USER_NAME }}"
           git config --global user.email "${{ secrets.USER_EMAIL }}"
           git add .version
-          git commit -m "V${{ steps.bump_version.outputs.new_version }}\n${{ steps.commit_message.outputs.message }}"
+          git commit -m "${{ steps.commit_message.outputs.message }}"
           git tag v${{ steps.bump_version.outputs.new_version }}
           git push origin main --tags
         continue-on-error: true
