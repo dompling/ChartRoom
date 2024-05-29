@@ -1,0 +1,91 @@
+name: deploy
+
+on:
+  push:
+    branches: [ master ] # master 分支有 push 时触发
+    paths-ignore: # 下列文件的变更不触发部署，可以自行添加
+      - README.md
+
+jobs:
+
+  deploy:
+    if: github.repository == 'dompling/ChartRoom'
+    runs-on: ubuntu-latest
+
+    steps:
+
+      # 下载源码
+      # 这一步就是检出你的仓库并下载里面的代码到runner中,actions/checkout@v2是官方自己造的轮子，直接拿来用就行
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Read version file
+        id: read_version
+        run: |
+          version=$(cat .version)
+          echo "Current version: $version"
+          echo "::set-output name=current_version::$version"
+
+      - name: Bump version
+        id: bump_version
+        run: |
+          current_version=${{ steps.read_version.outputs.current_version }}
+          IFS='.' read -r -a version_parts <<< "$current_version"
+          version_parts[2]=$((version_parts[2] + 1))
+          new_version="${version_parts[0]}.${version_parts[1]}.${version_parts[2]}"
+          echo "New version: $new_version"
+          echo $new_version > .version
+          echo "::set-output name=new_version::$new_version"  
+
+      - name: Commit new version
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add .version
+          git commit -m "Bump version to ${{ steps.bump_version.outputs.new_version }}"
+          git tag v${{ steps.bump_version.outputs.new_version }}
+          git push origin main --tags
+
+      - name: Setup Node
+        uses: actions/setup-node@master
+        with:
+          node-version: "16.14.6"
+
+      - name: Install dependencies
+        run: npm install -g pnpm
+
+      - name: Cache Node Modules
+        id: cache
+        uses: actions/cache@v2
+        with:
+          path: node_modules
+          key: node-modules-${{ runner.os }}-${{ hashFiles('pnpm-lock.yarml') }}
+
+      - name: Install Dependencies
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: pnpm install # 安装依赖
+
+      - name: Build
+        id: build
+        run: pnpm build # 打包
+
+      - name: Create release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v${{ steps.bump_version.outputs.new_version }}
+          release_name: Release v${{ steps.bump_version.outputs.new_version }}
+          draft: false
+          prerelease: false
+
+      - name: Upload release asset
+        uses: JasonEtco/upload-to-release@master
+        with:
+          asset_path: dist/Release v${{ steps.bump_version.outputs.new_version }}
+          asset_name: Release v${{ steps.bump_version.outputs.new_version }}.zip  # 修改为你实际的构建产物名称
+          asset_content_type: application/zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RELEASE_URL: ${{ steps.create_release.outputs.upload_url }}
