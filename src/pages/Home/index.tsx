@@ -46,11 +46,11 @@ const HomePage: React.FC = () => {
     const data: Record<string, API.MessageItem> = {};
 
     dataSource.forEach((item) => {
-      data[item.index] = item;
+      if (!item.loading) data[item.index] = item;
     });
 
     response.forEach((item) => {
-      data[item.index] = item;
+      if (!item.loading) data[item.index] = item;
     });
 
     let newDataSource: API.MessageItem[] = Object.values(data);
@@ -63,6 +63,7 @@ const HomePage: React.FC = () => {
 
   const fetchMsg = useRequest(getMessage, {
     manual: true,
+
     formatResult: (res) => res,
     onSuccess: (response: API.MessageItem[], [param]) => {
       if (param.index === 0 || response.length) scrollBottom();
@@ -90,18 +91,7 @@ const HomePage: React.FC = () => {
     },
   });
 
-  const fetchSend = useRequest(sendMessage, {
-    manual: true,
-    onSuccess: (_, [params]) => {
-      const msg = params as API.MessageItem;
-      const newData = dataSource.map((item) => {
-        if (item.index === msg.index) item.loading = false;
-        return item;
-      });
-      setDataSource(newData);
-      fetchMsg.run({ ...pagination, index: 0 });
-    },
-  });
+  const fetchSend = useRequest(sendMessage, { manual: true });
 
   useEffect(() => {
     $('#txtMsg').on('blur', function () {
@@ -112,13 +102,22 @@ const HomePage: React.FC = () => {
 
   const throttledFunction = useCallback(
     _.throttle(() => {
-      fetchMsg.run({
-        ...pagination,
-        index: _.last(dataSource)?.index || 0,
-      });
+      if (!fetchMsg.loading)
+        fetchMsg.run({
+          ...pagination,
+          index: _.last(dataSource.filter((item) => !item.loading))?.index || 0,
+        });
     }, 1000),
     [dataSource],
   );
+
+  const oldMsgFunction = useCallback(() => {
+    const historyIndex =
+      (_.first(dataSource.filter((item) => !item.loading))?.index || 0) -
+      pagination.count -
+      1;
+    fetchOldMsg.run({ ...pagination, index: historyIndex });
+  }, [dataSource]);
 
   useEffect(() => {
     const interval = setInterval(throttledFunction, 1000);
@@ -131,12 +130,6 @@ const HomePage: React.FC = () => {
       window.scroll(0, 0); //失焦后强制让页面归位
     });
   }, []);
-
-  const oldMsgFunction = useCallback(() => {
-    const historyIndex =
-      (_.first(dataSource)?.index || 0) - pagination.count - 1;
-    fetchOldMsg.run({ ...pagination, index: historyIndex });
-  }, [dataSource]);
 
   if (!wxid || !initialState?.userInfo?.wxid) return `抱歉你访问的页面不存在`;
 
@@ -171,19 +164,19 @@ const HomePage: React.FC = () => {
             fetchMsg.params[0]?.index &&
             !fetchOldMsg.loading
           ) {
-            console.log(2312);
             oldMsgFunction();
           }
           handleScroll();
         }}
       >
         <div id="debugout"></div>
-        <div
-          className="msgload throbber-loader"
-          style={{ display: fetchOldMsg.loading ? 'block' : 'none' }}
-        >
-          Loading…
-        </div>
+        {fetchOldMsg.loading && (
+          <div
+            className="msgload throbber-loader"
+          >
+            Loading…
+          </div>
+        )}
         {pagination.complete && <div className="noMore">没有更多消息</div>}
         <div id="msgout"></div>
         {dataSource.map((item) => {
@@ -226,8 +219,8 @@ const HomePage: React.FC = () => {
                 className="send nostart"
                 onClick={() => {
                   const msg = creatMsg();
-                  fetchSend.run(msg);
                   setDataSource([...dataSource, msg]);
+                  fetchSend.run(msg);
                   setValue('');
                   scrollBottom();
                 }}
