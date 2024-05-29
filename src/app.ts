@@ -1,6 +1,6 @@
 import { getUserInfo } from '@/services/user';
 import { getStoreUserInfo, getUrlParam } from '@/utils';
-import { CACHE_KEY } from '@/utils/config';
+import { API, CACHE_KEY } from '@/utils/config';
 import { RequestConfig } from '@@/plugin-request/request';
 
 export async function getInitialState(): Promise<{ userInfo?: API.userInfo }> {
@@ -26,7 +26,7 @@ export const request: RequestConfig<API.Response> = {
       Object.entries(options.data || {}).forEach(([key, val]) => {
         opt.push(`${key}=${val}`);
       });
-      return { url: `${process.env.API}${url}?${opt.join('&')}`, options };
+      return { url: `${API}${url}?${opt.join('&')}`, options };
     },
   ],
   responseInterceptors: [

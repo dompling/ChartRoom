@@ -23,7 +23,7 @@ export default defineConfig({
   ],
   npmClient: 'pnpm',
   define: {
-    'process.env.API': 'http://43.242.202.42',
+    'process.env.PORT': '9527',
     'process.env.CACHE': 'userInfo',
   },
 });
