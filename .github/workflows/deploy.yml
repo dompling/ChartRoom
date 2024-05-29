@@ -72,11 +72,7 @@ jobs:
       - name: Cache pnpm dependencies
         uses: actions/cache@v2
         with:
-          path: ~/.pnpm-store
           key: pnpm-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
-          restore-keys: |
-            pnpm-${{ runner.os }}-
-      
 
       - name: Install Dependencies
         if: steps.cache.outputs.cache-hit != 'true'
@@ -85,6 +81,9 @@ jobs:
       - name: Build
         id: build
         run: pnpm build # 打包
+
+      - name: Zip Dist
+        run: zip -r dist.zip dist
 
       - name: Create release
         id: create_release
@@ -97,10 +96,30 @@ jobs:
           draft: false
           prerelease: false
 
-      - name: Upload release asset
-        uses: JasonEtco/upload-to-release@master
-        with:
-          args: Release v${{ steps.bump_version.outputs.new_version }}.zip application/zip
+      - name: Upload Release Asset
+        uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.TOKEN }}
-          RELEASE_URL: ${{ steps.create_release.outputs.upload_url }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./dist.zip
+          asset_name: dist.zip
+          asset_content_type: application/zip
+
+  create-changelog:
+    runs-on: ubuntu-latest
+    # 需要等build结束后才执行此处
+    needs: build-release
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16.x
+
+      # 生成版本更新日志
+      - run: npx changelogithub
+        env:
+          GITHUB_TOKEN: ${{secrets.TOKEN}}
