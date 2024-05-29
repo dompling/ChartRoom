@@ -42,18 +42,6 @@ const HomePage: React.FC = () => {
     setShowTag(isShowTag);
   }
 
-  const fetchSend = useRequest(sendMessage, {
-    manual: true,
-    onSuccess: (_, [params]) => {
-      const msg = params as API.MessageItem;
-      const newData = dataSource.map((item) => {
-        if (item.index === msg.index) item.loading = false;
-        return item;
-      });
-      setDataSource(newData);
-    },
-  });
-
   const setMsgData = (response: API.MessageItem[]) => {
     const data: Record<string, API.MessageItem> = {};
 
@@ -77,7 +65,7 @@ const HomePage: React.FC = () => {
     manual: true,
     formatResult: (res) => res,
     onSuccess: (response: API.MessageItem[], [param]) => {
-      if (param.index === 0) scrollBottom();
+      if (param.index === 0 || response.length) scrollBottom();
       if (
         !oldMsgId &&
         (_.last(dataSource)?.index || 0) < (_.first(response)?.index || 0)
@@ -97,7 +85,21 @@ const HomePage: React.FC = () => {
         ...pagination,
         complete: !response.length || response.length < pagination.count,
       });
+      $('.msgcontent').scrollTop(100);
       setMsgData(response);
+    },
+  });
+
+  const fetchSend = useRequest(sendMessage, {
+    manual: true,
+    onSuccess: (_, [params]) => {
+      const msg = params as API.MessageItem;
+      const newData = dataSource.map((item) => {
+        if (item.index === msg.index) item.loading = false;
+        return item;
+      });
+      setDataSource(newData);
+      fetchMsg.run({ ...pagination, index: 0 });
     },
   });
 
@@ -128,20 +130,13 @@ const HomePage: React.FC = () => {
       //alert("松开输入");
       window.scroll(0, 0); //失焦后强制让页面归位
     });
-    $('.msgcontent').on('scroll', () => {
-      const scrollTop = $('.msgcontent').scrollTop() || 0;
-      if (scrollTop < 50 && !pagination.complete) {
-        const historyIndex =
-          (_.first(dataSource)?.index || 0) - pagination.count - 1;
-        return fetchOldMsg.run({
-          ...pagination,
-          index: historyIndex < 0 ? 1 : historyIndex,
-        });
-      }
-      handleScroll();
-    });
-    scrollBottom();
   }, []);
+
+  const oldMsgFunction = useCallback(() => {
+    const historyIndex =
+      (_.first(dataSource)?.index || 0) - pagination.count - 1;
+    fetchOldMsg.run({ ...pagination, index: historyIndex });
+  }, [dataSource]);
 
   if (!wxid || !initialState?.userInfo?.wxid) return `抱歉你访问的页面不存在`;
 
@@ -168,9 +163,27 @@ const HomePage: React.FC = () => {
       <div
         className="msgcontent"
         style={{ paddingBottom: keyboard ? 260 : 120 }}
+        onScroll={() => {
+          const scrollTop = $('.msgcontent').scrollTop() || 0;
+          if (
+            scrollTop < 50 &&
+            !pagination.complete &&
+            fetchMsg.params[0]?.index &&
+            !fetchOldMsg.loading
+          ) {
+            console.log(2312);
+            oldMsgFunction();
+          }
+          handleScroll();
+        }}
       >
         <div id="debugout"></div>
-        <div className="msgload throbber-loader">Loading…</div>
+        <div
+          className="msgload throbber-loader"
+          style={{ display: fetchOldMsg.loading ? 'block' : 'none' }}
+        >
+          Loading…
+        </div>
         {pagination.complete && <div className="noMore">没有更多消息</div>}
         <div id="msgout"></div>
         {dataSource.map((item) => {
