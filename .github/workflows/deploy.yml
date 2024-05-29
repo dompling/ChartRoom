@@ -58,7 +58,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@master
         with:
-          node-version: "16.14.6"
+          node-version: "16.20.0"
 
       - name: Install dependencies
         run: npm install -g pnpm
