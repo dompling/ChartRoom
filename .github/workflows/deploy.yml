@@ -42,7 +42,7 @@ jobs:
           echo $new_version > .version
           echo "::set-output name=new_version::$new_version"  
 
-      - name: Commit new version
+      - name: Commit and push file
         env:
           GITHUB_TOKEN: ${{ secrets.DEPLOY }}
         run: |
@@ -51,9 +51,8 @@ jobs:
           git add .version
           git commit -m "Bump version to ${{ steps.bump_version.outputs.new_version }}"
           git tag v${{ steps.bump_version.outputs.new_version }}
-          git remote set-url origin https://x-access-token:${{ secrets.DEPLOY }}@github.com/${{ github.repository }}.git
-          git remote -v
           git push origin main --tags
+        continue-on-error: true
     
 
       - name: Setup Node
