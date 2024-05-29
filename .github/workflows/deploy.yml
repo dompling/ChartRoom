@@ -44,7 +44,7 @@ jobs:
 
       - name: Commit and push file
         env:
-          GITHUB_TOKEN: ${{ secrets.DEPLOY }}
+          GITHUB_TOKEN: ${{ secrets.TOKEN }}
         run: |
           git config --global user.name "${{ secrets.USER_NAME }}"
           git config --global user.email "${{ secrets.USER_EMAIL }}"
@@ -82,7 +82,7 @@ jobs:
         id: create_release
         uses: actions/create-release@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.DEPLOY }}
+          GITHUB_TOKEN: ${{ secrets.TOKEN }}
         with:
           tag_name: v${{ steps.bump_version.outputs.new_version }}
           release_name: Release v${{ steps.bump_version.outputs.new_version }}
@@ -96,5 +96,5 @@ jobs:
           asset_name: Release v${{ steps.bump_version.outputs.new_version }}.zip  # 修改为你实际的构建产物名称
           asset_content_type: application/zip
         env:
-          GITHUB_TOKEN: ${{ secrets.DEPLOY }}
+          GITHUB_TOKEN: ${{ secrets.TOKEN }}
           RELEASE_URL: ${{ steps.create_release.outputs.upload_url }}
