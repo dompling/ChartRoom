@@ -53,7 +53,13 @@ jobs:
           git tag v${{ steps.bump_version.outputs.new_version }}
           git push origin main --tags
         continue-on-error: true
-    
+
+      - name: Debug commit step
+        if: failure()
+        run: |
+          echo "Failed to commit and push changes"
+          git status
+          git log -1
 
       - name: Setup Node
         uses: actions/setup-node@master
