@@ -1,7 +1,6 @@
 import Message from '@/components/Message';
 import { getMessage, sendMessage } from '@/services/message';
 import { useModel, useRequest, useSearchParams } from '@@/exports';
-import { PullToRefresh } from 'antd-mobile';
 import $ from 'jquery';
 import _ from 'lodash';
 import React, { useCallback, useEffect, useState } from 'react';
@@ -22,7 +21,7 @@ const HomePage: React.FC = () => {
 
   const [pagination, setPagination] = useState({
     index: 0,
-    count: 10,
+    count: 40,
     complete: false,
   });
 
@@ -56,21 +55,22 @@ const HomePage: React.FC = () => {
   });
 
   const setMsgData = (response: API.MessageItem[]) => {
-    let newDataSource: API.MessageItem[] = _.unionWith(
-      dataSource,
-      response,
-      (data, res) => data.index === res.index,
-    );
+    const data: Record<string, API.MessageItem> = {};
+
+    dataSource.forEach((item) => {
+      data[item.index] = item;
+    });
+
+    response.forEach((item) => {
+      data[item.index] = item;
+    });
+
+    let newDataSource: API.MessageItem[] = Object.values(data);
     newDataSource = _.sortBy(
       newDataSource,
       (item: API.MessageItem) => item.index,
     );
-    setDataSource(
-      newDataSource.map((item) => {
-        item.loading = false;
-        return item;
-      }),
-    );
+    setDataSource(newDataSource);
   };
 
   const fetchMsg = useRequest(getMessage, {
@@ -128,6 +128,19 @@ const HomePage: React.FC = () => {
       //alert("松开输入");
       window.scroll(0, 0); //失焦后强制让页面归位
     });
+    $('.msgcontent').on('scroll', () => {
+      const scrollTop = $('.msgcontent').scrollTop() || 0;
+      if (scrollTop < 50 && !pagination.complete) {
+        const historyIndex =
+          (_.first(dataSource)?.index || 0) - pagination.count - 1;
+        return fetchOldMsg.run({
+          ...pagination,
+          index: historyIndex < 0 ? 1 : historyIndex,
+        });
+      }
+      handleScroll();
+    });
+    scrollBottom();
   }, []);
 
   if (!wxid || !initialState?.userInfo?.wxid) return `抱歉你访问的页面不存在`;
@@ -152,34 +165,18 @@ const HomePage: React.FC = () => {
 
   return (
     <div className={'container'}>
-      <PullToRefresh
-        disabled={pagination.complete}
-        pullingText={pagination.complete ? '没有更多消息' : '历史消息'}
-        canReleaseText={pagination.complete ? '没有更多消息' : '历史消息'}
-        refreshingText={pagination.complete ? '没有更多消息' : '历史消息'}
-        onRefresh={async () => {
-          const historyIndex =
-            (_.first(dataSource)?.index || 0) - pagination.count - 1;
-          return fetchOldMsg.run({
-            ...pagination,
-            index: historyIndex < 0 ? 1 : historyIndex,
-          });
-        }}
+      <div
+        className="msgcontent"
+        style={{ paddingBottom: keyboard ? 260 : 120 }}
       >
-        <div
-          className="msgcontent"
-          style={{ paddingBottom: keyboard ? 240 : 58 }}
-          onScroll={() => handleScroll()}
-        >
-          <div id="debugout"></div>
-          <div className="msgload throbber-loader">Loading…</div>
-          {pagination.complete && <div className="noMore">没有更多消息</div>}
-          <div id="msgout"></div>
-          {dataSource.map((item) => {
-            return <Message key={item.index} data={item} />;
-          })}
-        </div>
-      </PullToRefresh>
+        <div id="debugout"></div>
+        <div className="msgload throbber-loader">Loading…</div>
+        {pagination.complete && <div className="noMore">没有更多消息</div>}
+        <div id="msgout"></div>
+        {dataSource.map((item) => {
+          return <Message key={item.index} data={item} />;
+        })}
+      </div>
       <form id="formsendmsg" onSubmit={() => false}>
         <div className={`divBottom ${keyboard ? 'msgdown selekb' : ''}`}>
           {showTag && (

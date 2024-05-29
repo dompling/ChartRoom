@@ -2,7 +2,7 @@ name: deploy
 
 on:
   push:
-    branches: [ main ] # master 分支有 push 时触发
+    branches: [main] # master 分支有 push 时触发
     paths-ignore: # 下列文件的变更不触发部署，可以自行添加
       - README.md
       - tsconfig.json
@@ -12,13 +12,11 @@ on:
       - .prettierrc
 
 jobs:
-
   deploy:
     if: github.repository == 'dompling/ChartRoom'
     runs-on: ubuntu-latest
 
     steps:
-
       # 下载源码
       # 这一步就是检出你的仓库并下载里面的代码到runner中,actions/checkout@v2是官方自己造的轮子，直接拿来用就行
       - name: Checkout
@@ -27,15 +25,15 @@ jobs:
       # 获取最近一次提交的消息
       - name: Get last commit message
         id: commit_message
-        run: echo "::set-output name=message::$(git log --format=%B -n 1 ${{ github.sha }})"
-
+        run: |
+          echo "name=$(git log --format=%B -n 1 ${{ github.sha }})" >> $message
 
       - name: Read version file
         id: read_version
         run: |
           version=$(cat .version)
           echo "Current version: $version"
-          echo "::set-output name=current_version::$version"
+          echo "name=$version" >> $current_version
 
       - name: Bump version
         id: bump_version
@@ -46,7 +44,7 @@ jobs:
           new_version="${version_parts[0]}.${version_parts[1]}.${version_parts[2]}"
           echo "New version: $new_version"
           echo $new_version > .version
-          echo "::set-output name=new_version::$new_version"  
+          echo "name=$new_version" $new_version
 
       - name: Commit and push file
         env:
@@ -55,7 +53,7 @@ jobs:
           git config --global user.name "${{ secrets.USER_NAME }}"
           git config --global user.email "${{ secrets.USER_EMAIL }}"
           git add .version
-          git commit -m "Bump version to ${{ steps.bump_version.outputs.new_version }}"
+          git commit -m "V${{ steps.bump_version.outputs.new_version }}\n${{ steps.commit_message.outputs.message }}"
           git tag v${{ steps.bump_version.outputs.new_version }}
           git push origin main --tags
         continue-on-error: true
@@ -70,19 +68,24 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@master
         with:
-          node-version: "18.12.0"
+          node-version: '18.12.0'
 
       - name: Install dependencies
         run: npm install -g pnpm
 
       - name: Cache pnpm dependencies
+        id: pnpm-cache
         uses: actions/cache@v2
         with:
-          path: node_modules
-          key: pnpm-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
+          path: |
+            ~/.pnpm-store
+            node_modules
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
 
       - name: Install Dependencies
-        if: steps.cache.outputs.cache-hit != 'true'
+        if: steps.pnpm-cache.outputs.cache-hit != 'true'
         run: pnpm install # 安装依赖
 
       - name: Build
