@@ -55,6 +55,24 @@ const HomePage: React.FC = () => {
     },
   });
 
+  const setMsgData = (response: API.MessageItem[]) => {
+    let newDataSource: API.MessageItem[] = _.unionWith(
+      dataSource,
+      response,
+      (data, res) => data.index === res.index,
+    );
+    newDataSource = _.sortBy(
+      newDataSource,
+      (item: API.MessageItem) => item.index,
+    );
+    setDataSource(
+      newDataSource.map((item) => {
+        item.loading = false;
+        return item;
+      }),
+    );
+  };
+
   const fetchMsg = useRequest(getMessage, {
     manual: true,
     formatResult: (res) => res,
@@ -67,21 +85,7 @@ const HomePage: React.FC = () => {
         setOldMsgId(_.last(dataSource)?.index || 0);
       }
       handleScroll();
-      let newDataSource: API.MessageItem[] = _.unionWith(
-        dataSource,
-        response,
-        (data, res) => data.index === res.index,
-      );
-      newDataSource = _.sortBy(
-        newDataSource,
-        (item: API.MessageItem) => item.index,
-      );
-      setDataSource(
-        newDataSource.map((item) => {
-          item.loading = false;
-          return item;
-        }),
-      );
+      setMsgData(response);
     },
   });
 
@@ -93,21 +97,7 @@ const HomePage: React.FC = () => {
         ...pagination,
         complete: !response.length || response.length < pagination.count,
       });
-      let newDataSource: API.MessageItem[] = _.unionWith(
-        dataSource,
-        response,
-        (data, res) => data.index === res.index,
-      );
-      newDataSource = _.sortBy(
-        newDataSource,
-        (item: API.MessageItem) => item.index,
-      );
-      setDataSource(
-        newDataSource.map((item) => {
-          item.loading = false;
-          return item;
-        }),
-      );
+      setMsgData(response);
     },
   });
 
