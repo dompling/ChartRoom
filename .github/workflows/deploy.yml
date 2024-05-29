@@ -78,6 +78,7 @@ jobs:
       - name: Cache pnpm dependencies
         uses: actions/cache@v2
         with:
+          path: node_modules
           key: pnpm-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
 
       - name: Install Dependencies
