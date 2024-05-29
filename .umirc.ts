@@ -14,6 +14,12 @@ export default defineConfig({
       path: '/',
       component: './Home',
     },
+    {
+      path: '/*',
+      title: '404',
+      layout: false,
+      component: '@/pages/404.tsx',
+    },
   ],
   npmClient: 'pnpm',
   define: {
