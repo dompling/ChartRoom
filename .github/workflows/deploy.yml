@@ -26,14 +26,14 @@ jobs:
       - name: Get last commit message
         id: commit_message
         run: |
-          echo "name=$(git log --format=%B -n 1 ${{ github.sha }})" >> $message
+          echo "message=$(git log --format=%B -n 1 ${{ github.sha }})" >> $GITHUB_OUTPUT
 
       - name: Read version file
         id: read_version
         run: |
           version=$(cat .version)
           echo "Current version: $version"
-          echo "name=$version" >> $current_version
+          echo "current_version=$version" >> $GITHUB_OUTPUT
 
       - name: Bump version
         id: bump_version
@@ -44,7 +44,7 @@ jobs:
           new_version="${version_parts[0]}.${version_parts[1]}.${version_parts[2]}"
           echo "New version: $new_version"
           echo $new_version > .version
-          echo "name=$new_version" $new_version
+          echo "new_version=$new_version" >> $GITHUB_OUTPUT
 
       - name: Commit and push file
         env:
