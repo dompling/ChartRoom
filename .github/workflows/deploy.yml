@@ -27,7 +27,7 @@ jobs:
         id: commit_message
         run: |
           echo "message=$(git log -2 --pretty=%B)" >> $GITHUB_OUTPUT
-          echo "message: $message"
+          echo "$message"
 
       - name: Read version file
         id: read_version
