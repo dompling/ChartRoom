@@ -100,10 +100,7 @@ jobs:
       - name: Upload release asset
         uses: JasonEtco/upload-to-release@master
         with:
-          asset_path: ./dist/Release v${{ steps.bump_version.outputs.new_version }}
-          asset_name: Release v${{ steps.bump_version.outputs.new_version }}.zip  # 修改为你实际的构建产物名称
-          asset_content_type: application/zip
-          github_token: ${{ secrets.TOKEN }}
+          args: Release v${{ steps.bump_version.outputs.new_version }}.zip application/zip
         env:
           GITHUB_TOKEN: ${{ secrets.TOKEN }}
           RELEASE_URL: ${{ steps.create_release.outputs.upload_url }}
