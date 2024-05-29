@@ -24,19 +24,18 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-        # 获取最近一次提交的消息
+      # 获取最近一次提交的消息
       - name: Get last commit message
         id: commit_message
-        run: |
-          COMMIT_MESSAGE=$(git log --format=%B -n 1 ${{ github.sha }})
-          echo "name=message" >> $COMMIT_MESSAGE
+        run: echo "::set-output name=message::$(git log --format=%B -n 1 ${{ github.sha }})"
+
 
       - name: Read version file
         id: read_version
         run: |
           version=$(cat .version)
           echo "Current version: $version"
-          echo "name=current_version" >> $version
+          echo "::set-output name=current_version::$version"
 
       - name: Bump version
         id: bump_version
@@ -47,7 +46,7 @@ jobs:
           new_version="${version_parts[0]}.${version_parts[1]}.${version_parts[2]}"
           echo "New version: $new_version"
           echo $new_version > .version
-          echo "name=new_version" >> $new_version
+          echo "::set-output name=new_version::$new_version"  
 
       - name: Commit and push file
         env:
