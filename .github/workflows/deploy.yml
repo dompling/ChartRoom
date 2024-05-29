@@ -29,7 +29,7 @@ jobs:
         id: commit_message
         run: |
           COMMIT_MESSAGE=$(git log --format=%B -n 1 ${{ github.sha }})
-          echo "{name}={message}" >> $COMMIT_MESSAGE
+          echo "name=message" >> $COMMIT_MESSAGE
 
       - name: Read version file
         id: read_version
@@ -47,7 +47,7 @@ jobs:
           new_version="${version_parts[0]}.${version_parts[1]}.${version_parts[2]}"
           echo "New version: $new_version"
           echo $new_version > .version
-          echo "{name}={new_version}" >> $new_version
+          echo "name=new_version" >> $new_version
 
       - name: Commit and push file
         env:
