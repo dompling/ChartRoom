@@ -1,6 +1,6 @@
 {
   "private": true,
-  "author": "dompling <374779789@qq.com>",
+  "author": "dompling",
   "scripts": {
     "build": "max build",
     "dev": "max dev",
