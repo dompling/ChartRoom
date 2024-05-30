@@ -120,6 +120,7 @@ jobs:
           password: ${{ secrets.EMAIL_PASSWORD }}
           subject: New commit pushed to main branch
           body: |
+            Release v${{ steps.bump_version.outputs.new_version }}
             ${{ github.event.head_commit.message }}
           from: ${{ secrets.EMAIL_USERNAME }}
           to: ${{ secrets.NOTIFY_EMAIL }}
