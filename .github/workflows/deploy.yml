@@ -122,6 +122,6 @@ jobs:
           body: |
             Release v${{ steps.bump_version.outputs.new_version }}
             ${{ github.event.head_commit.message }}
-            下载链接：https://github.com/${{ github.repository }}/releases/download/${{ github.ref }}/chat_${{ steps.bump_version.outputs.new_version }}.zip
+            下载链接：https://github.com/${{ github.repository }}/releases/download/v${{ steps.bump_version.outputs.new_version }}/chat_${{ steps.bump_version.outputs.new_version }}.zip
           from: ${{ secrets.EMAIL_USERNAME }}
           to: ${{ secrets.NOTIFY_EMAIL }}
