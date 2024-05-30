@@ -1,10 +1,12 @@
 import { getStoreUserInfo } from '@/utils';
+import * as nodeEmoji from 'node-emoji';
 import React from 'react';
 
 const Message: React.FC<{ data: API.MessageItem; loading?: boolean }> = ({
   data,
 }) => {
   const userInfo = getStoreUserInfo();
+  const content = nodeEmoji.emojify(decodeURIComponent(data.content));
 
   return (
     <div
@@ -30,7 +32,7 @@ const Message: React.FC<{ data: API.MessageItem; loading?: boolean }> = ({
               <img src={data.content} alt="图片" />
             </a>
           ) : (
-            <pre className="msgpre">{data.content}</pre>
+            <pre className="msgpre">{content}</pre>
           )}
         </div>
       </div>

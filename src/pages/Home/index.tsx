@@ -7,13 +7,15 @@ import React, { useCallback, useEffect, useState } from 'react';
 
 import './index.less';
 
+let interval: any;
+
 function scrollBottom() {
   _.debounce(() => {
     $('.msgcontent').animate(
       { scrollTop: $('.msgcontent')[0].scrollHeight },
-      100,
+      0,
     );
-  }, 300)();
+  }, 100)();
 }
 
 const HomePage: React.FC = () => {
@@ -63,7 +65,7 @@ const HomePage: React.FC = () => {
 
   const fetchMsg = useRequest(getMessage, {
     manual: true,
-
+    fetchKey: (params) => `${params.index}`,
     formatResult: (res) => res,
     onSuccess: (response: API.MessageItem[], [param]) => {
       if (param.index === 0 || response.length) scrollBottom();
@@ -75,6 +77,9 @@ const HomePage: React.FC = () => {
       }
       handleScroll();
       setMsgData(response);
+    },
+    onError: () => {
+      clearInterval(interval);
     },
   });
 
@@ -120,7 +125,7 @@ const HomePage: React.FC = () => {
   }, [dataSource]);
 
   useEffect(() => {
-    const interval = setInterval(throttledFunction, 1000);
+    interval = setInterval(throttledFunction, 1000);
     return () => clearInterval(interval);
   }, [throttledFunction]);
 
@@ -137,7 +142,7 @@ const HomePage: React.FC = () => {
     return {
       index: (_.last(dataSource)?.index || 0) + 1,
       type: 1,
-      content: value,
+      content: encodeURIComponent(value),
       headimg: initialState?.userInfo?.imgName,
       NickName: initialState?.userInfo?.NickName,
       wxid: initialState?.userInfo?.wxid,
@@ -170,18 +175,15 @@ const HomePage: React.FC = () => {
         }}
       >
         <div id="debugout"></div>
-        {fetchOldMsg.loading && (
-          <div
-            className="msgload throbber-loader"
-          >
-            Loading…
-          </div>
+        {(fetchOldMsg.loading || fetchMsg.fetches[0]?.loading) && (
+          <div className="msgload throbber-loader">Loading…</div>
         )}
         {pagination.complete && <div className="noMore">没有更多消息</div>}
         <div id="msgout"></div>
-        {dataSource.map((item) => {
-          return <Message key={item.index} data={item} />;
-        })}
+        {!fetchMsg.fetches[0]?.loading &&
+          dataSource.map((item) => {
+            return <Message key={item.index} data={item} />;
+          })}
       </div>
       <form id="formsendmsg" onSubmit={() => false}>
         <div className={`divBottom ${keyboard ? 'msgdown selekb' : ''}`}>
