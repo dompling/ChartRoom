@@ -2,7 +2,7 @@ name: deploy
 
 on:
   push:
-    branches: [main] # master 分支有 push 时触发
+    branches: [ main ] # master 分支有 push 时触发
     paths-ignore: # 下列文件的变更不触发部署，可以自行添加
       - README.md
       - tsconfig.json
@@ -26,8 +26,10 @@ jobs:
       - name: Get last commit message
         id: commit_message
         run: |
-          echo "message=$(git log -2 --pretty=%B)" >> $GITHUB_OUTPUT
+          echo "message=$(git log -1 --pretty=%B)" >> $GITHUB_OUTPUT
           echo "$message"
+        env:
+          LC_ALL: C.UTF-8
 
       - name: Read version file
         id: read_version
