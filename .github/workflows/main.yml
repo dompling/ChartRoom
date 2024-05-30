@@ -1,0 +1,26 @@
+name: Send Email Notification
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  send_email:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send Email
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 587
+          username: domplingyaya@gmail.com
+          password: 1314yy++
+          subject: New commit pushed to main branch
+          body: |
+            Hello,
+
+            A new commit has been pushed to the main branch.
+
+            Regards,
+            Your GitHub Workflow
+          to: dompling@qq.com
