@@ -26,15 +26,15 @@ const Message: React.FC<{ data: API.MessageItem; loading?: boolean }> = ({
           </div>
         )}
 
-        <div className="msgimg">
-          {data.type === 2 ? (
+        {data.type === 2 ? (
+          <div className="msgimg">
             <a>
               <img src={data.content} alt="图片" />
             </a>
-          ) : (
-            <pre className="msgpre">{content}</pre>
-          )}
-        </div>
+          </div>
+        ) : (
+          <pre className="msgpre">{content}</pre>
+        )}
       </div>
     </div>
   );
