@@ -11,8 +11,8 @@ let interval: any;
 
 function scrollBottom() {
   _.debounce(() => {
-    $('.msgcontent').animate(
-      { scrollTop: $('.msgcontent')[0].scrollHeight },
+    $('.msgcontent')?.animate(
+      { scrollTop: $('.msgcontent')?.[0]?.scrollHeight },
       0,
     );
   }, 100)();
