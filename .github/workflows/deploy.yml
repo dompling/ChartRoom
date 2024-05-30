@@ -26,7 +26,7 @@ jobs:
       - name: Get last commit message
         id: commit_message
         run: |
-          echo "COMMIT_MESSAGE=$(git log -1 --format='%s%n%n%b' --encoding=UTF-8)" > $GITHUB_ENV
+          echo "COMMIT_MESSAGE=$(git log -1 --format='%s%n%n%b')" > $GITHUB_ENV
           echo "The latest commit message is: ${{ env.COMMIT_MESSAGE }}"
 
       - name: Read version file
