@@ -20,11 +20,11 @@ const Message: React.FC<{ data: API.MessageItem; loading?: boolean }> = ({
           {data.NickName}
           <span>{data.time}</span>
         </h5>
-        {data.loading && (
-          <div className="msg-loader">
-            <div className="throbber-loader">Loading…</div>
-          </div>
-        )}
+        {/*{data.loading && (*/}
+        {/*  <div className="msg-loader">*/}
+        {/*    <div className="throbber-loader">Loading…</div>*/}
+        {/*  </div>*/}
+        {/*)}*/}
 
         {data.type === 2 ? (
           <div className="msgimg">

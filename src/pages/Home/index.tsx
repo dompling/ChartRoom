@@ -3,6 +3,7 @@ import { getMessage, sendMessage } from '@/services/message';
 import { useModel, useRequest, useSearchParams } from '@@/exports';
 import $ from 'jquery';
 import _ from 'lodash';
+import moment from 'moment';
 import React, { useCallback, useEffect, useState } from 'react';
 
 import './index.less';
@@ -146,6 +147,7 @@ const HomePage: React.FC = () => {
       headimg: initialState?.userInfo?.imgName,
       NickName: initialState?.userInfo?.NickName,
       wxid: initialState?.userInfo?.wxid,
+      time: moment().format('HH:mm:ss'),
       loading: true,
     } as API.MessageItem;
   };
