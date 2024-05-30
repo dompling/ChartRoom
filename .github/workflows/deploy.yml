@@ -26,7 +26,8 @@ jobs:
       - name: Get last commit message
         id: commit_message
         run: |
-          echo "message=$(git log -1 --format="%s%n%n%b")" >> $GITHUB_OUTPUT
+          echo "message=$(git log -1 --format='%s%n%n%b' --encoding=UTF-8)" >> $GITHUB_OUTPUT
+          echo "Last commit message: $message"
 
       - name: Read version file
         id: read_version
