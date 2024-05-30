@@ -26,6 +26,7 @@ jobs:
       - name: Get last commit message
         id: commit_message
         run: |
+          
           echo "message=$(git log -1 --pretty=format:'%s')" >> $GITHUB_OUTPUT
           echo "commit:$message"
 
