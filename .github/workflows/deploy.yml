@@ -116,8 +116,8 @@ jobs:
         with:
           server_address: smtp.gmail.com
           server_port: 587
-          username: domplingyaya@gmail.com
-          password: 1314yy++
+          username: ${{ secrets.EMAIL_USERNAME }}
+          password: ${{ secrets.EMAIL_PASSWORD }}
           subject: New commit pushed to main branch
           body: |
             Hello,
@@ -126,4 +126,5 @@ jobs:
             
             Regards,
             Your GitHub Workflow
+          from: ${{ secrets.EMAIL_USERNAME }}
           to: dompling@qq.com
