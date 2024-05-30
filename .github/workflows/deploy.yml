@@ -17,11 +17,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 获取最近一次提交的消息
-      - name: Get last commit message
-        id: commit_message
-        run: |
-              echo "message=${{ github.event.head_commit.message }}" >> $GITHUB_ENV
       # 下载源码
       # 这一步就是检出你的仓库并下载里面的代码到runner中,actions/checkout@v2是官方自己造的轮子，直接拿来用就行
       - name: Checkout
@@ -52,7 +47,7 @@ jobs:
           git config --global user.name "${{ secrets.USER_NAME }}"
           git config --global user.email "${{ secrets.USER_EMAIL }}"
           git add .version
-          git commit -m "${{ env.COMMIT_MESSAGE }}"
+          git commit -m "${{ github.event.head_commit.message }}"
           git tag v${{ steps.bump_version.outputs.new_version }}
           git push origin main --tags
         continue-on-error: true
@@ -110,7 +105,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.TOKEN }}
         with:
-          body: ${{ env.COMMIT_MESSAGE }}
+          body: ${{ github.event.head_commit.message }}
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ./dist.zip
           asset_name: chat_${{ steps.bump_version.outputs.new_version }}.zip
