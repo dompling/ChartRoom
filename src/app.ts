@@ -1,6 +1,7 @@
 import { getUserInfo } from '@/services/user';
 import { getStoreUserInfo, getUrlParam } from '@/utils';
 import { API } from '@/utils/config';
+import { history } from '@@/exports';
 import { RequestConfig } from '@@/plugin-request/request';
 
 export async function getInitialState(): Promise<{ userInfo?: API.userInfo }> {
@@ -34,6 +35,10 @@ export const request: RequestConfig<API.Response> = {
       if (response.data?.code === 1) {
         response.data = response.data.Message || response.data.message;
         return response;
+      }
+      if ([-1, 0].includes(response.data.code)) {
+        localStorage.clear();
+        history.push('/404');
       }
       throw new Error(JSON.stringify(response));
     },
