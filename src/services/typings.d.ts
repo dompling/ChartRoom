@@ -12,6 +12,7 @@ declare namespace API {
     wxid: string;
     NickName: string;
     imgName: string;
+    role: 1 | 0;
   }
 
   export interface MessageItem {
@@ -23,5 +24,6 @@ declare namespace API {
     wxid?: string;
     time?: string;
     loading?: boolean;
+    role: 1 | 0;
   }
 }

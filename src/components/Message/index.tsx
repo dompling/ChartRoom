@@ -10,15 +10,14 @@ const Message: React.FC<{ data: API.MessageItem; loading?: boolean }> = ({
 
   return (
     <div
-      className={`msglayer ${data.wxid !== userInfo.wxid ? 'msgleft' : 'msgright'}`}
+      className={`msglayer ${data.wxid !== userInfo.wxid ? 'msgleft' : 'msgright'} ${data.role === 1 ? 'qun' : ''}`}
     >
       <div className="fpop">
         <div className="headimg">
           <img src={data.headimg} alt={data.wxid} />
         </div>
-        <h5 className="uname">
-          {data.NickName}
-          <span>{data.time}</span>
+        <h5 className={`uname ${data.role === 1 ? 'sys' : ''}`}>
+          {data.NickName} {data.time}
         </h5>
         {/*{data.loading && (*/}
         {/*  <div className="msg-loader">*/}

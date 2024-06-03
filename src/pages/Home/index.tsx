@@ -149,6 +149,7 @@ const HomePage: React.FC = () => {
       wxid: initialState?.userInfo?.wxid,
       time: moment().format('HH:mm:ss'),
       loading: true,
+      role: initialState.userInfo?.role,
     } as API.MessageItem;
   };
 

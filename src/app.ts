@@ -1,6 +1,6 @@
 import { getUserInfo } from '@/services/user';
 import { getStoreUserInfo, getUrlParam } from '@/utils';
-import { API, CACHE_KEY } from '@/utils/config';
+import { API } from '@/utils/config';
 import { RequestConfig } from '@@/plugin-request/request';
 
 export async function getInitialState(): Promise<{ userInfo?: API.userInfo }> {
@@ -35,11 +35,6 @@ export const request: RequestConfig<API.Response> = {
         response.data = response.data.Message || response.data.message;
         return response;
       }
-      const userInfo: API.userInfo = getStoreUserInfo();
-      localStorage.setItem(
-        CACHE_KEY,
-        JSON.stringify({ ...userInfo, wxid: null }),
-      );
       throw new Error(JSON.stringify(response));
     },
   ],
