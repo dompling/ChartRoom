@@ -32,7 +32,6 @@ const HomePage: React.FC = () => {
 
   const [oldMsgId, setOldMsgId] = useState(0);
   const [showTag, setShowTag] = useState<boolean>(false);
-  const [value, setValue] = useState<string>('');
   const [dataSource, setDataSource] = useState<API.MessageItem[]>([]);
 
   const [params] = useSearchParams();
@@ -143,7 +142,7 @@ const HomePage: React.FC = () => {
     return {
       index: (_.last(dataSource)?.index || 0) + 1,
       type: 1,
-      content: encodeURIComponent(value),
+      content: encodeURIComponent($('#txtMsg').val() as string),
       headimg: initialState?.userInfo?.imgName,
       NickName: initialState?.userInfo?.NickName,
       wxid: initialState?.userInfo?.wxid,
@@ -158,6 +157,11 @@ const HomePage: React.FC = () => {
     const oldIndex = dataSource.findIndex((item) => item.index === oldMsgId);
     msgCount = dataSource.length - 1 - oldIndex;
   }
+
+  const handleChange = (text: string) => {
+    const val = $('#txtMsg').val();
+    $('#txtMsg').val(`${val}${text}`);
+  };
 
   return (
     <div className={'container'}>
@@ -213,20 +217,17 @@ const HomePage: React.FC = () => {
               <textarea
                 rows={1}
                 id="txtMsg"
-                value={value}
                 autoComplete="off"
                 className="nostart"
-                onChange={(e) => {
-                  setValue(e.target.value);
-                }}
               ></textarea>
               <span
                 className="send nostart"
                 onClick={() => {
+                  if (!$('#txtMsg').val()) return;
                   const msg = creatMsg();
                   setDataSource([...dataSource, msg]);
                   fetchSend.run(msg);
-                  setValue('');
+                  $('#txtMsg').val('');
                   scrollBottom();
                 }}
               >
@@ -236,45 +237,48 @@ const HomePage: React.FC = () => {
           </div>
           <div className="inpvkb">
             <ul className="nb">
-              <li onClick={() => setValue(`${value}1`)}>1</li>
-              <li onClick={() => setValue(`${value}2`)}>2</li>
-              <li onClick={() => setValue(`${value}3`)}>3</li>
-              <li onClick={() => setValue(`${value}4`)}>4</li>
-              <li onClick={() => setValue(`${value}5`)}>5</li>
-              <li onClick={() => setValue(`${value}6`)}>6</li>
+              <li onClick={() => handleChange(`1`)}>1</li>
+              <li onClick={() => handleChange(`2`)}>2</li>
+              <li onClick={() => handleChange(`3`)}>3</li>
+              <li onClick={() => handleChange(`4`)}>4</li>
+              <li onClick={() => handleChange(`5`)}>5</li>
+              <li onClick={() => handleChange(`6`)}>6</li>
               <li
                 className="del"
-                onClick={() => setValue(`${value}`.slice(0, -1))}
+                onClick={() => {
+                  const val = $('#txtMsg').val() as string;
+                  $('#txtMsg').val(val.slice(0, -1));
+                }}
               >
                 ×
               </li>
             </ul>
             <ul className="dw">
-              <li onClick={() => setValue(`${value}=`)}>=</li>
-              <li onClick={() => setValue(`${value}/`)}>/</li>
-              <li onClick={() => setValue(`${value}0`)}>0</li>
-              <li onClick={() => setValue(`${value}7`)}>7</li>
-              <li onClick={() => setValue(`${value}8`)}>8</li>
-              <li onClick={() => setValue(`${value}9`)}>9</li>
-              <li onClick={() => setValue(`${value}取消`)}>取消</li>
+              <li onClick={() => handleChange(`=`)}>=</li>
+              <li onClick={() => handleChange(`/`)}>/</li>
+              <li onClick={() => handleChange(`0`)}>0</li>
+              <li onClick={() => handleChange(`7`)}>7</li>
+              <li onClick={() => handleChange(`8`)}>8</li>
+              <li onClick={() => handleChange(`9`)}>9</li>
+              <li onClick={() => handleChange(`取消`)}>取消</li>
             </ul>
             <ul className="nb">
-              <li onClick={() => setValue(`${value}番`)}>番</li>
-              <li onClick={() => setValue(`${value}角`)}>角</li>
-              <li onClick={() => setValue(`${value}念`)}>念</li>
-              <li onClick={() => setValue(`${value}堂`)}>堂</li>
-              <li onClick={() => setValue(`${value}无`)}>无</li>
-              <li onClick={() => setValue(`${value}查`)}>查</li>
-              <li onClick={() => setValue(`${value}上`)}>上</li>
+              <li onClick={() => handleChange(`番`)}>番</li>
+              <li onClick={() => handleChange(`角`)}>角</li>
+              <li onClick={() => handleChange(`念`)}>念</li>
+              <li onClick={() => handleChange(`正`)}>正</li>
+              <li onClick={() => handleChange(`无`)}>无</li>
+              <li onClick={() => handleChange(`查`)}>查</li>
+              <li onClick={() => handleChange(`上`)}>上</li>
             </ul>
             <ul className="fh">
-              <li onClick={() => setValue(`${value}大`)}>大</li>
-              <li onClick={() => setValue(`${value}小`)}>小</li>
-              <li onClick={() => setValue(`${value}单`)}>单</li>
-              <li onClick={() => setValue(`${value}双`)}>双</li>
-              <li className="bspace" onClick={() => setValue(`${value} `)}></li>
-              <li onClick={() => setValue(`${value}流水`)}>流水</li>
-              <li onClick={() => setValue(`${value}下`)}>下</li>
+              <li onClick={() => handleChange(`大`)}>大</li>
+              <li onClick={() => handleChange(`小`)}>小</li>
+              <li onClick={() => handleChange(`单`)}>单</li>
+              <li onClick={() => handleChange(`双`)}>双</li>
+              <li className="bspace" onClick={() => handleChange(` `)}></li>
+              <li onClick={() => handleChange(`流水`)}>流水</li>
+              <li onClick={() => handleChange(`下`)}>下</li>
             </ul>
           </div>
         </div>
