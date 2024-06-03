@@ -1,5 +1,3 @@
-import { CACHE_KEY } from '@/utils/config';
-
 export const getUrlParam = (name: string) => {
   const reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)');
   const r = window.location.search.substr(1).match(reg);
@@ -8,8 +6,9 @@ export const getUrlParam = (name: string) => {
 };
 
 export const getStoreUserInfo = (): API.userInfo => {
+  const wxid = getUrlParam('wxid') || '';
   try {
-    const user = JSON.parse(localStorage.getItem(CACHE_KEY) || '{}');
+    const user = JSON.parse(localStorage.getItem(wxid) || '{}');
     return user as API.userInfo;
   } catch (e) {
     return {} as API.userInfo;

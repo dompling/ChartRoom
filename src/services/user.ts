@@ -1,4 +1,3 @@
-import { CACHE_KEY } from '@/utils/config';
 import { request } from '@@/exports';
 
 export const getUserInfo = (wxid: string) => {
@@ -7,7 +6,7 @@ export const getUserInfo = (wxid: string) => {
     data: { wxid },
     skipErrorHandler: true,
   }).then((response) => {
-    localStorage.setItem(CACHE_KEY, JSON.stringify(response?.[0] || {}));
+    localStorage.setItem(wxid, JSON.stringify(response?.[0] || {}));
     return response?.[0];
   });
 };

@@ -69,7 +69,7 @@ const HomePage: React.FC = () => {
     fetchKey: (params) => `${params.index}`,
     formatResult: (res) => res,
     onSuccess: (response: API.MessageItem[], [param]) => {
-      if (param.index === 0 || response.length) scrollBottom();
+      if (param.index === 0 || (response.length && !showTag)) scrollBottom();
       if (
         !oldMsgId &&
         (_.last(dataSource)?.index || 0) < (_.first(response)?.index || 0)
