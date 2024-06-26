@@ -21,11 +21,11 @@ export const request: RequestConfig<API.Response> = {
       if (!userInfo.wxid && !options.skipErrorHandler) {
         throw new Error('未登录');
       }
-      options.data.token = userInfo.token;
+      if (userInfo?.token) options.data.token = userInfo?.token;
       options.data.wxid = userInfo.wxid || options.data.wxid;
 
       Object.entries(options.data || {}).forEach(([key, val]) => {
-        opt.push(`${key}=${val}`);
+        opt.push(`${key}=${val || ''}`);
       });
       return { url: `${API}${url}?${opt.join('&')}`, options };
     },
